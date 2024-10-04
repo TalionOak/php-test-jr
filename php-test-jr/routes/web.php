@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Book;
+use App\Models\User;
+use App\Services\BookService;
+use App\Services\UserService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -24,4 +29,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+// Route to borrow a book
+Route::get('/borrow/{bookId}/user/{userId}', function ($bookId, $userId, BookService $bookService) {
+    return $bookService->borrowBook($bookId, $userId);
+});
+
+// Route to return a book
+Route::get('/return/{bookId}', function ($bookId, BookService $bookService) {
+    return $bookService->returnBook($bookId);
+});
+
+// Route to check active loans for a user
+Route::get('/user/{userId}/loans', function ($userId, UserService $userService) {
+    return $userService->getActiveLoans($userId);
+});
+
+require __DIR__ . '/auth.php';
