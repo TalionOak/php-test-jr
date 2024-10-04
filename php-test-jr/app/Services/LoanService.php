@@ -6,7 +6,7 @@ use App\Repositories\BookRepository;
 use App\Repositories\LoanRepository;
 use App\Repositories\UserRepository;
 
-class BookService
+class LoanService
 {
     protected $loanRepository;
     protected $bookRepository;
@@ -50,5 +50,10 @@ class BookService
         }
 
         return false;
+    }
+
+    public function getActiveLoans($userId)
+    {
+        return $this->loanRepository->getActiveLoansByUserId($userId);
     }
 }

@@ -3,21 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Services\BookService;
+use App\Services\LoanService;
 use Illuminate\Http\JsonResponse;
 
 class ReturnController extends Controller
 {
-    protected $bookService;
 
-    public function __construct(BookService $bookService)
+    public function return(string $bookId, LoanService $loanService): JsonResponse
     {
-        $this->bookService = $bookService;
-    }
-
-    public function return($bookId): JsonResponse
-    {
-        $success = $this->bookService->returnBook($bookId);
+        $success = $loanService->returnBook($bookId);
 
         if ($success) {
             return response()->json(['message' => 'Book returned successfully!']);
