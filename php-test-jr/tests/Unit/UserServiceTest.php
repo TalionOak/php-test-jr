@@ -14,10 +14,10 @@ it('gets active loans', function () {
 
     $userService = new UserService();
     $bookService = new BookService();
-    $bookService->borrowBook($book->id, $user->id);
+    $bookService->borrowBook($book, $user);
 
     $loans = $userService->getActiveLoans($user->id);
 
     expect($loans)->not->toBeEmpty();
-    expect($loans->first()->id)->toBe($book->id);
+    expect($loans->first()->book_id)->toBe($book->id);
 });

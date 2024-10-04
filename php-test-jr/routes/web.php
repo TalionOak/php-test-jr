@@ -1,10 +1,9 @@
 <?php
 
+use App\Http\Controllers\BorrowController;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Book;
-use App\Models\User;
-use App\Services\BookService;
-use App\Services\UserService;
+use App\Http\Controllers\ReturnController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,34 +29,10 @@ Route::middleware('auth')->group(function () {
 });
 
 // Route to borrow a book
-Route::get('/borrow/{bookId}/user/{userId}', function ($bookId, $userId, BookService $bookService) {
-    $book = Book::findOrFail($bookId);
-    $user = User::findOrFail($userId);
-
-    if ($bookService->borrowBook($book, $user)) {
-        return response()->json(['message' => 'Book borrowed successfully!']);
-    }
-
-    return response()->json(['message' => 'Book is not available.'], 400);
-});
-
+Route::get('/borrow/{bookId}/user/{userId}', [BorrowController::class, 'borrow']);
 // Route to return a book
-Route::get('/return/{bookId}', function ($bookId, BookService $bookService) {
-    $book = Book::findOrFail($bookId);
-
-    if ($bookService->returnBook($book)) {
-        return response()->json(['message' => 'Book returned successfully!']);
-    }
-
-    return response()->json(['message' => 'Error returning the book.'], 400);
-});
-
+Route::get('/return/{bookId}', [ReturnController::class, 'return']);
 // Route to check active loans for a user
-Route::get('/user/{userId}/loans', function ($userId, UserService $userService) {
-    $user = User::findOrFail($userId);
-    $loans = $userService->getActiveLoans($user);
-
-    return response()->json($loans);
-});
+Route::get('/user/{userId}/loans', [LoanController::class, 'activeLoans']);
 
 require __DIR__ . '/auth.php';

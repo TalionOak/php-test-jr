@@ -12,9 +12,9 @@ it('borrows a book successfully', function () {
     $user = User::factory()->create();
 
     $bookService = new BookService();
-    $result = $bookService->borrowBook($book->id, $user->id);
+    $result = $bookService->borrowBook($book, $user);
 
-    expect($result)->toBe("Book borrowed successfully.");
+    expect($result)->toBeTrue();
 });
 
 it('returns a book successfully', function () {
@@ -22,8 +22,8 @@ it('returns a book successfully', function () {
     $user = User::factory()->create();
 
     $bookService = new BookService();
-    $bookService->borrowBook($book->id, $user->id);
-    $result = $bookService->returnBook($book->id);
+    $bookService->borrowBook($book, $user);
+    $result = $bookService->returnBook($book);
 
-    expect($result)->toBe("Book returned successfully.");
+    expect($result)->toBeTrue();
 });
