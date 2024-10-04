@@ -2,35 +2,53 @@
 
 namespace App\Services;
 
-use App\Models\Book;
-use App\Models\Loan;
-use App\Models\User;
+use App\Repositories\BookRepository;
+use App\Repositories\LoanRepository;
+use App\Repositories\UserRepository;
 
 class BookService
 {
-    public function borrowBook(Book $book, User $user)
+    protected $loanRepository;
+    protected $bookRepository;
+    protected $userRepository;
+
+    public function __construct(
+        LoanRepository $loanRepository,
+        BookRepository $bookRepository,
+        UserRepository $userRepository
+    ) {
+        $this->loanRepository = $loanRepository;
+        $this->bookRepository = $bookRepository;
+        $this->userRepository = $userRepository;
+    }
+
+    public function borrowBook($bookId, $userId)
     {
+        $book = $this->bookRepository->findBookById($bookId);
+        $user = $this->userRepository->findUserById($userId);
+
         if ($book->isAvailable()) {
-            Loan::create([
+            $this->loanRepository->createLoan([
                 'book_id' => $book->id,
                 'user_id' => $user->id,
                 'loan_date' => now()
             ]);
             return true;
         }
+
         return false;
     }
 
-    public function returnBook(Book $book)
+    public function returnBook($bookId)
     {
-        $loan = Loan::where('book_id', $book->id)
-            ->whereNull('return_date')
-            ->first();
+        $book = $this->bookRepository->findBookById($bookId);
+        $loan = $this->loanRepository->findActiveLoanByBook($book->id);
+
         if ($loan) {
-            $loan->return_date = now();
-            $loan->save();
+            $this->loanRepository->updateLoan($loan, ['return_date' => now()]);
             return true;
         }
+
         return false;
     }
 }

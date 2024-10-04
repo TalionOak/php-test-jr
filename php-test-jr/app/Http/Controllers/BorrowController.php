@@ -3,20 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Book;
-use App\Models\User;
 use App\Services\BookService;
 use Illuminate\Http\JsonResponse;
 
 class BorrowController extends Controller
 {
-    public function borrow($bookId, $userId, BookService $bookService): JsonResponse
-    {
-        $book = Book::findOrFail($bookId);
-        $user = User::findOrFail($userId);
+    protected $bookService;
 
-        if ($bookService->borrowBook($book, $user)) {
-            return response()->json(['message' => 'Book borrowed successfully!']);
+    public function __construct(BookService $bookService)
+    {
+        $this->bookService = $bookService;
+    }
+
+    public function borrow(string $bookId, string $userId): JsonResponse
+    {
+        $success = $this->bookService->borrowBook($bookId, $userId);
+
+        if ($success) {
+            return response()->json(['message' => 'Book borrowed successfully.']);
         }
 
         return response()->json(['message' => 'Book is not available.'], 400);

@@ -1,23 +1,37 @@
 <?php
 
-use App\Models\Book;
-use App\Models\User;
-use App\Services\BookService;
+use App\Repositories\LoanRepository;
 use App\Services\UserService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 
 uses(Tests\TestCase::class, RefreshDatabase::class);
 
-it('gets active loans', function () {
-    $user = User::factory()->create();
-    $book = Book::factory()->create();
+it('returns loans when there are active loans', function () {
+    $loanRepositoryMock = Mockery::mock(LoanRepository::class);
 
-    $userService = new UserService();
-    $bookService = new BookService();
-    $bookService->borrowBook($book, $user);
+    $loanRepositoryMock->shouldReceive('getActiveLoansByUserId')
+        ->with(1)
+        ->andReturn(collect(['loan1', 'loan2']));
 
-    $loans = $userService->getActiveLoans($user->id);
+    $userService = new UserService($loanRepositoryMock);
+    $response = $userService->getActiveLoans(1);
 
-    expect($loans)->not->toBeEmpty();
-    expect($loans->first()->book_id)->toBe($book->id);
+    expect($response)->toBeInstanceOf(Collection::class);
+    expect($response->toArray())->toEqual(['loan1', 'loan2']);
+});
+
+it('returns no active loans message when there are no active loans', function () {
+    $loanRepositoryMock = Mockery::mock(LoanRepository::class);
+
+    $loanRepositoryMock->shouldReceive('getActiveLoansByUserId')
+        ->with(2)
+        ->andReturn(collect());
+
+    $userService = new UserService($loanRepositoryMock);
+
+    $response = $userService->getActiveLoans(2);
+
+    expect($response)->toBeInstanceOf(Collection::class);
+    expect($response->isEmpty())->toBeTrue();
 });

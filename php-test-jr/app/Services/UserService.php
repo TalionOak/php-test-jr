@@ -2,17 +2,19 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Repositories\LoanRepository;
 
 class UserService
 {
+    protected $loanRepository;
+
+    public function __construct(LoanRepository $loanRepository)
+    {
+        $this->loanRepository = $loanRepository;
+    }
+
     public function getActiveLoans($userId)
     {
-        $user = User::find($userId);
-        if ($user) {
-            $loans = $user->activeLoans;
-            return $loans->isEmpty() ? "No active loans." : $loans;
-        }
-        return "User not found.";
+        return $this->loanRepository->getActiveLoansByUserId($userId);
     }
 }
