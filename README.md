@@ -2,40 +2,46 @@
 
 # Sistema de Gerenciamento de Biblioteca
 
-## Descrição do Projeto
-Desenvolva um sistema simples de gerenciamento de biblioteca que permita adicionar, remover e listar livros, além de gerenciar empréstimos de livros.
+## Backend Setup
 
-## Requisitos do Projeto
-1. **Classes e Objetos:**
-   - Crie classes para representar os principais componentes do sistema: `Livro`, `Usuario`, `Emprestimo`.
-   - Cada classe deve ter atributos e métodos apropriados. Por exemplo, a classe `Livro` pode ter atributos como `titulo`, `autor`, `isbn`, e métodos como `emprestar()` e `devolver()`.
+Navigate to the backend directory and follow these steps:
 
-2. **Encapsulamento:**
-   - Utilize encapsulamento para proteger os dados das classes. Os atributos devem ser privados e acessados através de métodos públicos (getters e setters).
+1. Install dependencies:
 
-3. **Herança:**
-   - Implemente herança onde for apropriado. Por exemplo, você pode ter uma classe base `Pessoa` e derivar a classe `Usuario` dela.
+`composer install`
 
-4. **Polimorfismo:**
-   - Utilize polimorfismo para permitir que diferentes tipos de usuários (por exemplo, `Aluno` e `Professor`) possam ser tratados de maneira uniforme.
+2. Run database migrations:
 
-5. **DDD (Domain-Driven Design):**
-   - Estruture o projeto seguindo os princípios de DDD. Crie camadas de domínio, aplicação e infraestrutura.
-   - Defina entidades, agregados, repositórios e serviços de domínio.
-   - Utilize Value Objects para representar conceitos imutáveis, como ISBN.
+`php artisan migrate`
 
-6. **Persistência:**
-   - Implemente uma camada de persistência simples usando arquivos JSON ou um banco de dados SQLite para armazenar os dados dos livros e usuários.
+3. Seed the database:
 
-7. **Publicação no Git:**
-   - Crie um repositório no GitHub, Bitbucket ou GitLab e faça commits regulares mostrando o progresso do desenvolvimento.
-   - Inclua um arquivo README.md com instruções sobre como configurar e executar o projeto.
+`php artisan db:seed`
 
-## Requisitos
+4. Start the backend server:
 
-- Todo o código criado precisa conter teste unitário;
-- A padronização de sintaxe deve ser PSR-2 (https://www.php-fig.org/psr/psr-2/);
-- O código precisa estar devidamente documentado, seguindo o padrão dos arquivos atuais;
-- Todo código e documentação deve estar em inglês.
-- voce deve criar esse teste em um repositirio proprio do github e enviar o link final do projeto no email recebido pelo noso RH
+`php artisan serve`
 
+The backend should now be running on `http://localhost:8000`.
+
+## Frontend Setup
+
+Open a new terminal window and navigate to the frontend directory:
+
+cd php-test-jr/frontend
+
+Then, follow these steps:
+
+1. Install dependencies:
+
+`npm install`
+
+2. Start the frontend development server:
+
+`npm start`
+
+The application should automatically open in your default browser at `http://localhost:3000`.
+
+## Accessing the Application
+
+Once both the backend and frontend servers are running, you can access the full application at: `http://localhost:3000`.
