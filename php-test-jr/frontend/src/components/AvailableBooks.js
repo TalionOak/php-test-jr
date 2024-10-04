@@ -47,9 +47,30 @@ const BookInfo = styled.p`
   font-size: 0.9em;
 `;
 
+const BorrowButton = styled.button`
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+
+  &:hover {
+    background-color: #27ae60;
+  }
+
+  &:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+  }
+`;
+
 function AvailableBooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const userId = 1; // Substitua pelo ID do usuário atual
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -66,6 +87,23 @@ function AvailableBooks() {
     fetchBooks();
   }, []);
 
+  const handleBorrow = async (bookId) => {
+    try {
+      await api.get(`/borrow/${bookId}/user/${userId}`);
+      // Atualiza a lista de livros após o empréstimo
+      const updatedBooks = books.map(book => 
+        book.id === bookId 
+          ? { ...book, active_loans: book.active_loans + 1 } 
+          : book
+      );
+      setBooks(updatedBooks);
+      alert('Livro emprestado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao emprestar o livro:', error);
+      alert('Erro ao emprestar o livro. Por favor, tente novamente.');
+    }
+  };
+
   if (loading) return <p>Carregando...</p>;
 
   return (
@@ -80,6 +118,12 @@ function AvailableBooks() {
             <BookInfo>Ano de publicação: {book.publication_year}</BookInfo>
             <BookInfo>Total de cópias: {book.total_copies}</BookInfo>
             <BookInfo>Empréstimos ativos: {book.active_loans}</BookInfo>
+            <BorrowButton 
+              onClick={() => handleBorrow(book.id)}
+              disabled={book.active_loans >= book.total_copies}
+            >
+              {book.active_loans >= book.total_copies ? 'Indisponível' : 'Emprestar'}
+            </BorrowButton>
           </BookCard>
         ))}
       </BookGrid>
