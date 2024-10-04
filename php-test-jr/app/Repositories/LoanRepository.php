@@ -35,4 +35,9 @@ class LoanRepository
         return Loan::where('book_id', $bookId)
             ->whereNull('return_date')->count();
     }
+
+    public function isBookAvailable($bookId)
+    {
+        return !$this->findActiveLoanByBook($bookId);
+    }
 }

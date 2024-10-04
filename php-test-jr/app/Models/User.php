@@ -44,10 +44,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public function activeLoans()
-    {
-        return $this->hasMany(Loan::class)
-            ->whereNull('return_date');
-    }
 }

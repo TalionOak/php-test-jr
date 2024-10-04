@@ -10,11 +10,4 @@ class Book extends Model
     use HasFactory;
 
     protected $fillable = ['title', 'author', 'isbn', 'publication_year'];
-
-    public function isAvailable()
-    {
-        return !Loan::where('book_id', $this->id)
-            ->whereNull('return_date')
-            ->exists();
-    }
 }
