@@ -40,4 +40,11 @@ class LoanRepository
     {
         return !$this->findActiveLoanByBook($bookId);
     }
+
+    public function getActiveLoansCount($bookId)
+    {
+        return Loan::where('book_id', $bookId)
+            ->whereNull('return_date')
+            ->count();
+    }
 }

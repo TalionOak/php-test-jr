@@ -22,13 +22,14 @@ class LoanService
         $this->userRepository = $userRepository;
     }
 
-
     public function borrowBook($bookId, $userId)
     {
         $book = $this->bookRepository->findBookById($bookId);
         $user = $this->userRepository->findUserById($userId);
+        
+        $activeLoansCount = $this->loanRepository->getActiveLoansCount($bookId);
 
-        if ($this->loanRepository->isBookAvailable($bookId)) {
+        if ($activeLoansCount < $book->total_copies) {
             $this->loanRepository->createLoan([
                 'book_id' => $book->id,
                 'user_id' => $user->id,

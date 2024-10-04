@@ -30,12 +30,12 @@ function createLoanService($loanRepositoryMock, $bookRepositoryMock, $userReposi
 it('borrows a book successfully', function () {
     [$loanRepositoryMock, $bookRepositoryMock, $userRepositoryMock] = setUpMocks();
 
-    $book = Book::factory()->create();
+    $book = Book::factory()->create(['total_copies' => 2]);
     $user = User::factory()->create();
 
     $bookRepositoryMock->shouldReceive('findBookById')->with($book->id)->andReturn($book);
     $userRepositoryMock->shouldReceive('findUserById')->with($user->id)->andReturn($user);
-    $loanRepositoryMock->shouldReceive('isBookAvailable')->with($book->id)->andReturn(true);
+    $loanRepositoryMock->shouldReceive('getActiveLoansCount')->with($book->id)->andReturn(1);
     $loanRepositoryMock->shouldReceive('createLoan')->once()->andReturnTrue();
 
     $loanService = createLoanService($loanRepositoryMock, $bookRepositoryMock, $userRepositoryMock);
@@ -47,12 +47,12 @@ it('borrows a book successfully', function () {
 it('fails to borrow an unavailable book', function () {
     [$loanRepositoryMock, $bookRepositoryMock, $userRepositoryMock] = setUpMocks();
 
-    $book = Book::factory()->create();
+    $book = Book::factory()->create(['total_copies' => 1]);
     $user = User::factory()->create();
 
     $bookRepositoryMock->shouldReceive('findBookById')->with($book->id)->andReturn($book);
     $userRepositoryMock->shouldReceive('findUserById')->with($user->id)->andReturn($user);
-    $loanRepositoryMock->shouldReceive('isBookAvailable')->with($book->id)->andReturn(false);
+    $loanRepositoryMock->shouldReceive('getActiveLoansCount')->with($book->id)->andReturn(1);
 
     $loanService = createLoanService($loanRepositoryMock, $bookRepositoryMock, $userRepositoryMock);
     $response = $loanService->borrowBook($book->id, $user->id);

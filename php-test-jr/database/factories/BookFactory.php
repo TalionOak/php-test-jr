@@ -19,6 +19,7 @@ class BookFactory extends Factory
             'author' => $this->faker->name,
             'isbn' => $this->faker->unique()->isbn13,
             'publication_year' => $this->faker->year,
+            'total_copies' => $this->faker->numberBetween(1, 2),
         ];
     }
 }
