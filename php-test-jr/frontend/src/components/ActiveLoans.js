@@ -56,24 +56,56 @@ const LoadingMessage = styled.p`
   font-size: 18px;
 `;
 
+const ReturnButton = styled.button`
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+
+  &:hover {
+    background-color: #2980b9;
+  }
+
+  &:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+  }
+`;
+
 function ActiveLoans({ userId }) {
     const [loans, setLoans] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchLoans = async () => {
-            try {
-                const response = await api.get(`/user/${userId}/loans`);
-                setLoans(response.data);
-            } catch (error) {
-                console.error('Erro ao buscar empréstimos:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchLoans = async () => {
+        try {
+            const response = await api.get(`/user/${userId}/loans`);
+            setLoans(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar empréstimos:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchLoans();
     }, [userId]);
+
+    const handleReturn = async (bookId) => {
+        try {
+            await api.get(`/return/${bookId}`);
+            alert('Livro devolvido com sucesso!');
+            // Atualiza a lista de empréstimos após a devolução
+            fetchLoans();
+        } catch (error) {
+            console.error('Erro ao devolver o livro:', error);
+            alert('Erro ao devolver o livro. Por favor, tente novamente.');
+        }
+    };
 
     if (loading) return <LoadingMessage>Carregando...</LoadingMessage>;
 
@@ -93,6 +125,9 @@ function ActiveLoans({ userId }) {
                             <LoanDate>
                                 Data do empréstimo: {new Date(loan.loan_date).toLocaleDateString()}
                             </LoanDate>
+                            <ReturnButton onClick={() => handleReturn(loan.book.id)}>
+                                Devolver Livro
+                            </ReturnButton>
                         </LoanItem>
                     ))}
                 </LoanList>
