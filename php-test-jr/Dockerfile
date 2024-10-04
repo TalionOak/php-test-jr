@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 # Instale as dependências
 RUN apt-get update && apt-get install -y \
@@ -19,7 +19,9 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install
+RUN composer install --no-scripts --no-autoloader
+
+RUN composer dump-autoload --optimize
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
