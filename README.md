@@ -28,7 +28,7 @@ The backend should now be running on `http://localhost:8000`.
 
 Open a new terminal window and navigate to the frontend directory:
 
-cd php-test-jr/frontend
+`cd php-test-jr/frontend`
 
 Then, follow these steps:
 
