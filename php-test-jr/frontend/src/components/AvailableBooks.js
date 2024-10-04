@@ -70,7 +70,7 @@ const BorrowButton = styled.button`
 function AvailableBooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const userId = 1; // Substitua pelo ID do usuário atual
+  const userId = 1;
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -90,10 +90,9 @@ function AvailableBooks() {
   const handleBorrow = async (bookId) => {
     try {
       await api.get(`/borrow/${bookId}/user/${userId}`);
-      // Atualiza a lista de livros após o empréstimo
-      const updatedBooks = books.map(book => 
-        book.id === bookId 
-          ? { ...book, active_loans: book.active_loans + 1 } 
+      const updatedBooks = books.map(book =>
+        book.id === bookId
+          ? { ...book, active_loans: book.active_loans + 1 }
           : book
       );
       setBooks(updatedBooks);
@@ -118,11 +117,11 @@ function AvailableBooks() {
             <BookInfo>Ano de publicação: {book.publication_year}</BookInfo>
             <BookInfo>Total de cópias: {book.total_copies}</BookInfo>
             <BookInfo>Empréstimos ativos: {book.active_loans}</BookInfo>
-            <BorrowButton 
+            <BorrowButton
               onClick={() => handleBorrow(book.id)}
               disabled={book.active_loans >= book.total_copies}
             >
-              {book.active_loans >= book.total_copies ? 'Indisponível' : 'Emprestar'}
+              {book.active_loans >= book.total_copies ? 'Indisponível' : 'Pegar emprestado'}
             </BorrowButton>
           </BookCard>
         ))}
