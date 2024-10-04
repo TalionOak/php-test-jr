@@ -25,7 +25,7 @@ class LoanRepository
 
     public function getActiveLoansByUserId($userId)
     {
-        return Loan::where('user_id', $userId)
+        return Loan::with('book')->where('user_id', $userId)
             ->whereNull('return_date')
             ->get();
     }
