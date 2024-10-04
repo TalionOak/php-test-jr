@@ -128,3 +128,23 @@ it('returns an empty collection when there are no active loans', function () {
     expect($response)->toBeInstanceOf(Collection::class);
     expect($response->isEmpty())->toBeTrue();
 });
+
+it('returns available books correctly', function () {
+    [$loanRepositoryMock, $bookRepositoryMock, $userRepositoryMock] = setUpMocks();
+
+    $availableBooks = collect([
+        Book::factory()->create(['title' => 'Available Book 1']),
+        Book::factory()->create(['title' => 'Available Book 2']),
+    ]);
+
+    $bookRepositoryMock->shouldReceive('getAvailableBooks')
+        ->once()
+        ->andReturn($availableBooks);
+
+    $loanService = createLoanService($loanRepositoryMock, $bookRepositoryMock, $userRepositoryMock);
+    $response = $loanService->getAvailableBooks();
+
+    expect($response)->toBeInstanceOf(Collection::class);
+    expect($response->count())->toBe(2);
+    expect($response->pluck('title')->toArray())->toEqual(['Available Book 1', 'Available Book 2']);
+});

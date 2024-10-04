@@ -26,7 +26,7 @@ class LoanService
     {
         $book = $this->bookRepository->findBookById($bookId);
         $user = $this->userRepository->findUserById($userId);
-        
+
         $activeLoansCount = $this->loanRepository->getActiveLoansCount($bookId);
 
         if ($activeLoansCount < $book->total_copies) {
@@ -57,5 +57,10 @@ class LoanService
     public function getActiveLoans($userId)
     {
         return $this->loanRepository->getActiveLoansByUserId($userId);
+    }
+
+    public function getAvailableBooks()
+    {
+        return $this->bookRepository->getAvailableBooks();
     }
 }
