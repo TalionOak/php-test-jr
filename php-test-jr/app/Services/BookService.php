@@ -3,24 +3,34 @@
 namespace App\Services;
 
 use App\Models\Book;
+use App\Models\Loan;
+use App\Models\User;
 
 class BookService
 {
-    public function borrowBook($bookId, $userId)
+    public function borrowBook(Book $book, User $user)
     {
-        $book = Book::find($bookId);
-        if ($book) {
-            return $book->borrow($userId) ? "Book borrowed successfully." : "Book is not available.";
+        if ($book->isAvailable()) {
+            Loan::create([
+                'book_id' => $book->id,
+                'user_id' => $user->id,
+                'loan_date' => now()
+            ]);
+            return true;
         }
-        return "Book not found.";
+        return false;
     }
 
-    public function returnBook($bookId)
+    public function returnBook(Book $book)
     {
-        $book = Book::find($bookId);
-        if ($book) {
-            return $book->returnBook() ? "Book returned successfully." : "Book was not borrowed.";
+        $loan = Loan::where('book_id', $book->id)
+            ->whereNull('return_date')
+            ->first();
+        if ($loan) {
+            $loan->return_date = now();
+            $loan->save();
+            return true;
         }
-        return "Book not found.";
+        return false;
     }
 }
